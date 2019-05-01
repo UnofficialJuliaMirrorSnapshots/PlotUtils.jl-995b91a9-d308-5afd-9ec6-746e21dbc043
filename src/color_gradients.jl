@@ -62,27 +62,7 @@ function clibrary(grad::Symbol)
     _gradients[1] = grad
 end
 
-const _rainbowColors = RGBA{Float64}[colorant"purple", colorant"blue", colorant"green", colorant"orange", colorant"red"]
-const _testColors = RGBA{Float64}[colorant"darkblue", colorant"blueviolet",  colorant"darkcyan",colorant"green",
-                     darken(colorant"yellow",0.3), colorant"orange", darken(colorant"red",0.2)]
-
-
 const _gradients = [:Plots]
-
-const _misc_color_lib = ColorLibrary(IdDict(:default => :sequential, :sequential => :heat, :diverging => :bluesreds), IdDict(
-    :reds         => RGBA{Float64}[colorant"lightpink", colorant"darkred"],
-    :greens       => RGBA{Float64}[colorant"lightgreen", colorant"darkgreen"],
-    :redsblues    => RGBA{Float64}[colorant"darkred", RGB(0.8,0.85,0.8), colorant"darkblue"],
-    :bluesreds    => RGBA{Float64}[colorant"darkblue", RGB(0.8,0.85,0.8), colorant"darkred"],
-    :heat         => RGBA{Float64}[colorant"lightyellow", colorant"orange", colorant"darkred"],
-    :grays        => RGBA{Float64}[RGB(.05,.05,.05),RGB(.95,.95,.95)],
-    :rainbow      => _rainbowColors,
-    :lightrainbow => map(lighten, _rainbowColors),
-    :darkrainbow  => map(darken, _rainbowColors),
-    :darktest     => _testColors,
-    :lighttest    => map(c -> lighten(c, 0.3), _testColors),
-))
-
 
 """
     clibraries()
@@ -177,13 +157,7 @@ function _color_list(arg, ::Nothing)
     cgrad_colors(arg)
 end
 
-function _color_list(arg, alpha)
-    colors = cgrad_colors(arg)
-    for i in eachindex(colors)
-        colors[i] = RGBA{Float64}(convert(RGB{Float64}, colors[i]), alpha)
-    end
-    colors
-end
+_color_list(arg, alpha) = RGBA{Float64}.(convert.(RGB{Float64}, cgrad_colors(arg)), alpha)
 
 cgrad(arg::Symbol, cl::Symbol, values; kw...) = cgrad(cgrad_colors(arg, color_library = cl), values; kw...)
 
@@ -250,3 +224,4 @@ include("gradients/matplotlib.jl")
 include("gradients/cmocean.jl")
 include("gradients/colorbrewer.jl")
 include("gradients/colorcet.jl")
+include("gradients/misc.jl")
